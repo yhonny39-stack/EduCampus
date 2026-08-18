@@ -4,25 +4,32 @@ import Login from '../views/Login.vue';
 import Dashboard from '../views/Dashboard.vue';
 
 const routes = [
+
     {
         path: '/',
         redirect: '/login'
     },
+
     {
         path: '/login',
-        name: 'login',
+        name: 'Login',
         component: Login
     },
+
     {
         path: '/dashboard',
-        name: 'dashboard',
+        name: 'Dashboard',
         component: Dashboard
     }
+
 ];
 
 const router = createRouter({
+
     history: createWebHistory(),
+
     routes
+
 });
 
 export default router;

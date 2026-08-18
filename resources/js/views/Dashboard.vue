@@ -2,91 +2,37 @@
 
     <div class="container py-5">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="card shadow">
 
-            <div>
-                <h1 class="fw-bold">Bienvenido a EduCampus</h1>
+            <div class="card-body">
 
-                <p class="text-muted">
-                    Sistema de Gestión Escolar
+                <h1>
+                    Bienvenido a EduCampus
+                </h1>
+
+                <p>
+                    Has iniciado sesión correctamente.
                 </p>
-            </div>
 
-            <button class="btn btn-outline-danger" @click="cerrarSesion">
-                <i class="bi bi-box-arrow-right me-2"></i>
-                Cerrar sesión
-            </button>
+                <p v-if="user">
 
-        </div>
+                    Usuario:
+                    <strong>
+                        {{ user.name }}
+                    </strong>
 
+                </p>
 
-        <div class="row g-4">
+                <button
+                    class="btn btn-danger"
+                    @click="logout"
+                >
 
-            <div class="col-md-4">
+                    <i class="bi bi-box-arrow-right me-2"></i>
 
-                <div class="card border-0 shadow-sm">
+                    Cerrar sesión
 
-                    <div class="card-body">
-
-                        <i class="bi bi-people fs-1 text-primary"></i>
-
-                        <h5 class="mt-3">
-                            Estudiantes
-                        </h5>
-
-                        <h2>
-                            0
-                        </h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-4">
-
-                <div class="card border-0 shadow-sm">
-
-                    <div class="card-body">
-
-                        <i class="bi bi-person-workspace fs-1 text-success"></i>
-
-                        <h5 class="mt-3">
-                            Docentes
-                        </h5>
-
-                        <h2>
-                            0
-                        </h2>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-4">
-
-                <div class="card border-0 shadow-sm">
-
-                    <div class="card-body">
-
-                        <i class="bi bi-book fs-1 text-warning"></i>
-
-                        <h5 class="mt-3">
-                            Cursos
-                        </h5>
-
-                        <h2>
-                            0
-                        </h2>
-
-                    </div>
-
-                </div>
+                </button>
 
             </div>
 
@@ -99,13 +45,89 @@
 
 <script setup>
 
+import { ref, onMounted } from 'vue';
+
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const cerrarSesion = () => {
+const user = ref(null);
 
-    router.push('/login');
+
+onMounted(async () => {
+
+    try {
+
+        const response = await fetch('/user', {
+
+            headers: {
+
+                'Accept': 'application/json'
+
+            },
+
+            credentials: 'same-origin'
+
+        });
+
+
+        if (!response.ok) {
+
+            router.push('/login');
+
+            return;
+
+        }
+
+
+        const data = await response.json();
+
+        user.value = data.user;
+
+    }
+
+    catch (error) {
+
+        router.push('/login');
+
+    }
+
+});
+
+
+const logout = async () => {
+
+    try {
+
+        await fetch('/logout', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Accept': 'application/json',
+
+                'X-CSRF-TOKEN': document
+                    .querySelector('meta[name="csrf-token"]')
+                    ?.getAttribute('content')
+
+            },
+
+            credentials: 'same-origin'
+
+        });
+
+        sessionStorage.removeItem('educampus_user');
+
+        router.push('/login');
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
 
 };
 
