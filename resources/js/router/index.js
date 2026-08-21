@@ -1,28 +1,63 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router'
 
-import Login from '../views/Login.vue';
-import Dashboard from '../views/Dashboard.vue';
+import Login from '../views/Login.vue'
+
+import AppLayout from '../layouts/AppLayout.vue'
+
+import Dashboard from '../views/Dashboard.vue'
 
 const routes = [
 
-    {
-        path: '/',
-        redirect: '/login'
-    },
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN
+    |--------------------------------------------------------------------------
+    */
 
     {
         path: '/login',
-        name: 'Login',
+
+        name: 'login',
+
         component: Login
     },
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | SISTEMA
+    |--------------------------------------------------------------------------
+    */
+
     {
-        path: '/dashboard',
-        name: 'Dashboard',
-        component: Dashboard
+        path: '/',
+
+        component: AppLayout,
+
+        children: [
+
+            {
+                path: '',
+                redirect: '/dashboard'
+            },
+
+            {
+                path: '/dashboard',
+
+                name: 'dashboard',
+
+                component: Dashboard,
+
+                meta: {
+                    title: 'Inicio'
+                }
+            }
+
+        ]
     }
 
-];
+]
+
 
 const router = createRouter({
 
@@ -30,6 +65,7 @@ const router = createRouter({
 
     routes
 
-});
+})
 
-export default router;
+
+export default router
